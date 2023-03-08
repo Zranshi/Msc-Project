@@ -46,10 +46,11 @@ def full_arrangement():
 def check(op: Operator):
     s1 = (2, 2, 2, 1, 1, 1, 0, 0, 0)
     s2 = (2, 1, 0, 2, 1, 0, 2, 1, 0)
-    d = {s1}
-    new_que = deque([s2])
+    d = set()
+    new_que = deque([s1, s2])
     while new_que:
         s = new_que.popleft()
+        d.add(s)
         new: set[tuple] = set()
         res = op.cal(s, s)
         if res not in d:
@@ -62,7 +63,6 @@ def check(op: Operator):
             if res not in d:
                 new.add(res)
         for item in new:
-            d.add(item)
             new_que.append(item)
     print(op, end=" | ")
     print(len(d))

@@ -1,6 +1,7 @@
 from collections import deque
 from itertools import product
 
+
 class State:
     def __init__(self, p1: bool, p2: bool, p3: bool, p4: bool) -> None:
         self.state = [
@@ -28,9 +29,7 @@ class Operator:
         res = []
         for i in range(4):
             res.append(
-                self.cal_map[
-                    (formar.state[i // 2][i % 2], latter.state[i // 2][i % 2])
-                ]
+                self.cal_map[(formar.state[i // 2][i % 2], latter.state[i // 2][i % 2])]
             )
         return State(*res)
 
@@ -45,10 +44,11 @@ def full_arrangement():
 
 
 def check(op: Operator, s1: State, s2: State):
-    d = {s1.export()}
-    new_que = deque([s2])
+    d = set()
+    new_que = deque([s1, s2])
     while new_que:
         s = new_que.popleft()
+        d.add(s.export())
         new: set[State] = set()
         res = op.cal(s, s)
         if res.export() not in d:
@@ -62,7 +62,6 @@ def check(op: Operator, s1: State, s2: State):
             if res.export() not in d:
                 new.add(res.export())
         for item in new:
-            d.add(item)
             new_que.append(State(*item))
 
     return d
