@@ -1,7 +1,5 @@
 from collections import deque
 
-from typing_extensions import Self
-
 
 class State:
     def __init__(self, p1: bool, p2: bool, p3: bool, p4: bool) -> None:
@@ -13,12 +11,8 @@ class State:
     def __str__(self) -> str:
         return "\n".join([f"{v}" for v in self.state])
 
-    def _export(self) -> tuple:
+    def export(self) -> tuple:
         return tuple(self.state[0] + self.state[1])
-
-    @classmethod
-    def _import(cls, t: tuple) -> Self:
-        return cls(*t)
 
 
 class Operator:
@@ -54,25 +48,25 @@ def full_arrangement():
 
 
 def check(op: Operator, s1: State, s2: State):
-    d = {s1._export()}
+    d = {s1.export()}
     new_que = deque([s2])
     while new_que:
         s = new_que.popleft()
         new: set[State] = set()
         res = op.cal(s, s)
-        if res._export() not in d:
-            new.add(res._export())
+        if res.export() not in d:
+            new.add(res.export())
         for t in d:
-            old_s = State._import(t)
+            old_s = State(*t)
             res = op.cal(s, old_s)
-            if res._export() not in d:
-                new.add(res._export())
+            if res.export() not in d:
+                new.add(res.export())
             res = op.cal(old_s, s)
-            if res._export() not in d:
-                new.add(res._export())
+            if res.export() not in d:
+                new.add(res.export())
         for item in new:
             d.add(item)
-            new_que.append(State._import(item))
+            new_que.append(State(*item))
 
     return d
 
