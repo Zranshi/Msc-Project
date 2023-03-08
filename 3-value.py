@@ -1,4 +1,5 @@
 from collections import deque
+from itertools import product
 
 
 class Operator:
@@ -38,19 +39,13 @@ class Operator:
 
 def full_arrangement():
     domin = [0, 1, 2]
-    for p1 in domin:
-        for p2 in domin:
-            for p3 in domin:
-                for p4 in domin:
-                    for p5 in domin:
-                        for p6 in domin:
-                            for p7 in domin:
-                                for p8 in domin:
-                                    for p9 in domin:
-                                        yield (p1, p2, p3, p4, p5, p6, p7, p8, p9)
+    for item in product(*[domin for _ in range(9)]):
+        yield item
 
 
-def check(op: Operator, s1: tuple, s2: tuple):
+def check(op: Operator):
+    s1 = (2, 2, 2, 1, 1, 1, 0, 0, 0)
+    s2 = (2, 1, 0, 2, 1, 0, 2, 1, 0)
     d = {s1}
     new_que = deque([s2])
     while new_que:
@@ -69,22 +64,17 @@ def check(op: Operator, s1: tuple, s2: tuple):
         for item in new:
             d.add(item)
             new_que.append(item)
-
-    return d
+    print(op, end=" | ")
+    print(len(d))
+    if len(d) == 3**9:
+        print(op)
 
 
 def main():
     idx = 0
     for v in full_arrangement():
         print(f"{idx} / {3**9}", end=" | ")
-        op = Operator(*v)
-        print(op, end=" | ")
-        s1 = (2, 2, 2, 1, 1, 1, 0, 0, 0)
-        s2 = (2, 1, 0, 2, 1, 0, 2, 1, 0)
-        d = check(op, s1, s2)
-        print(len(d))
-        if len(d) == 3**9:
-            print(op)
+        check(Operator(*v))
         idx += 1
 
 

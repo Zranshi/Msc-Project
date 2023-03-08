@@ -1,5 +1,5 @@
 from collections import deque
-
+from itertools import product
 
 class State:
     def __init__(self, p1: bool, p2: bool, p3: bool, p4: bool) -> None:
@@ -40,11 +40,8 @@ class Operator:
 
 def full_arrangement():
     domin = [True, False]
-    for p1 in domin:
-        for p2 in domin:
-            for p3 in domin:
-                for p4 in domin:
-                    yield (p1, p2, p3, p4)
+    for item in product(*[domin for _ in range(4)]):
+        yield item
 
 
 def check(op: Operator, s1: State, s2: State):
