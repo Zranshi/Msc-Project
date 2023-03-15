@@ -28,10 +28,7 @@ class Operator:
         }
 
     def cal(self, formar: tuple, latter: tuple) -> tuple:
-        res = []
-        for i in range(9):
-            res.append(self.cal_map[(formar[i], latter[i])])
-        return tuple(res)
+        return tuple([self.cal_map[(formar[i], latter[i])] for i in range(9)])
 
     def __str__(self) -> str:
         return f"{self.cal_map}"
@@ -46,11 +43,10 @@ def full_arrangement():
 def check(op: Operator):
     s1 = (2, 2, 2, 1, 1, 1, 0, 0, 0)
     s2 = (2, 1, 0, 2, 1, 0, 2, 1, 0)
-    d = set()
+    d = {s1, s2}
     new_que = deque([s1, s2])
     while new_que:
         s = new_que.popleft()
-        d.add(s)
         new: set[tuple] = set()
         res = op.cal(s, s)
         if res not in d:
@@ -63,6 +59,7 @@ def check(op: Operator):
             if res not in d:
                 new.add(res)
         for item in new:
+            d.add(item)
             new_que.append(item)
     print(op, end=" | ")
     print(len(d))
