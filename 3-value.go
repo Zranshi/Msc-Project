@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math"
 	"os"
 )
 
@@ -14,26 +15,18 @@ var (
 	d        map[State]bool
 )
 
-var INIT = 61
-
 type State = [9]byte
 
 type Operator struct {
-	mapping map[[2]byte]byte
+	mapping [3][3]byte
 }
 
 func NewOperator(tt, tm, tf, mt, mm, mf, ft, fm, ff byte) Operator {
 	return Operator{
-		mapping: map[[2]byte]byte{
-			{2, 2}: tt,
-			{2, 1}: tm,
-			{2, 0}: tf,
-			{1, 2}: mt,
-			{1, 1}: mm,
-			{1, 0}: mf,
-			{0, 2}: ft,
-			{0, 1}: fm,
-			{0, 0}: ff,
+		mapping: [3][3]byte{
+			{tt, tm, tf},
+			{mt, mm, mf},
+			{ft, fm, ff},
 		},
 	}
 }
@@ -41,7 +34,7 @@ func NewOperator(tt, tm, tf, mt, mm, mf, ft, fm, ff byte) Operator {
 func (op Operator) cal(formmar, latter State) State {
 	s := State{}
 	for i := 0; i < 9; i++ {
-		s[i] = op.mapping[[2]byte{formmar[i], latter[i]}]
+		s[i] = op.mapping[formmar[i]][latter[i]]
 	}
 	return s
 }
@@ -82,27 +75,18 @@ func check(op Operator, f *os.File, d map[State]bool) {
 	}
 }
 
-func full_arrangement() (res []State) {
-	for i1 := byte(0); i1 < 3; i1++ {
-		for i2 := byte(0); i2 < 3; i2++ {
-			for i3 := byte(0); i3 < 3; i3++ {
-				for i4 := byte(0); i4 < 3; i4++ {
-					for i5 := byte(0); i5 < 3; i5++ {
-						for i6 := byte(0); i6 < 3; i6++ {
-							for i7 := byte(0); i7 < 3; i7++ {
-								for i8 := byte(0); i8 < 3; i8++ {
-									for i9 := byte(0); i9 < 3; i9++ {
-										res = append(res, State{i1, i2, i3, i4, i5, i6, i7, i8, i9})
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+func full_arrangement() []State {
+	elements := []byte{0, 1, 2}
+	totalPossibilities := int(math.Pow(float64(len(elements)), 9))
+	possibilities := make([]State, totalPossibilities)
+	for i := 0; i < totalPossibilities; i++ {
+		possibility := State{}
+		for j := 0; j < 9; j++ {
+			possibility[j] = elements[i/int(math.Pow(float64(len(elements)), float64(j)))%len(elements)]
 		}
+		possibilities[i] = possibility
 	}
-	return
+	return possibilities
 }
 
 func getFlag() {
@@ -129,9 +113,8 @@ func main() {
 			i++
 			j--
 		}
-
 	}
-	for _, v := range full_arrangement()[start:end] {
+	for _, v := range arrangements[start:end] {
 		file.WriteString(fmt.Sprintf("%d / %d |", idx, 19683))
 		check(NewOperator(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]), file, d)
 		idx++
