@@ -60,4 +60,4 @@ if __name__ == "__main__":
 
 
 # Analysis: For most of the results, it is valid, but there are a small number of failures.
-# I don't know what the reason is. It may be that the conjecture is wrong, or there is an error in the result of NAND-like-operator.
+# I don't know what the reason is. It may be that the conjecture is wrong, or there is an error in the result of NAND-like-operator, or there is some thing wrong about my algorithm.
