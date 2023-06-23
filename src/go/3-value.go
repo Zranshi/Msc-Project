@@ -67,6 +67,9 @@ func check(op Operator, f *os.File, d map[State]bool) {
 			d[v] = true
 			que = append(que, v)
 		}
+		if len(d) == 19683 {
+			break
+		}
 	}
 	f.WriteString(fmt.Sprintf("%d |", op.mapping))
 	f.WriteString(fmt.Sprintln(len(d)))

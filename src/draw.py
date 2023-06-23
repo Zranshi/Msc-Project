@@ -1,5 +1,6 @@
-import matplotlib.pyplot as plt
 from collections import defaultdict
+
+import matplotlib.pyplot as plt
 
 with open("./output.txt", "r") as f:
     lines = f.readlines()
@@ -15,7 +16,7 @@ for line in lines:
 elses = []
 visable = []
 for k, v in counters.items():
-    if v<150:
+    if v < 150:
         elses.append(k)
     else:
         visable.append(k)
@@ -31,7 +32,6 @@ for k in elses:
 
 keys.append("else")
 values.append(elses_value)
-
 
 
 fig, ax = plt.subplots()

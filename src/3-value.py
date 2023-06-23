@@ -1,4 +1,5 @@
 from collections import deque
+from functools import lru_cache
 from itertools import product
 
 
@@ -27,17 +28,12 @@ class Operator:
             (0, 0): ff,
         }
 
+    @lru_cache(19683)
     def cal(self, formar: tuple, latter: tuple) -> tuple:
         return tuple([self.cal_map[(formar[i], latter[i])] for i in range(9)])
 
     def __str__(self) -> str:
         return f"{self.cal_map}"
-
-
-def full_arrangement():
-    domin = [0, 1, 2]
-    for item in product(*[domin for _ in range(9)]):
-        yield item
 
 
 def check(op: Operator):
@@ -61,18 +57,27 @@ def check(op: Operator):
         for item in new:
             d.add(item)
             new_que.append(item)
-    print(op, end=" | ")
-    print(len(d))
-    if len(d) == 3**9:
-        print(op)
+        if len(d) == 19683:
+            break
+    return f"{op.cal_map}|{len(d)}"
+
+
+def full_arrangement():
+    domin = [0, 1, 2]
+    for item in product(*[domin for _ in range(9)]):
+        yield item
 
 
 def main():
     idx = 0
-    for v in full_arrangement():
-        print(f"{idx} / {3**9}", end=" | ")
-        check(Operator(*v))
-        idx += 1
+    with open("./output", "w+") as f:
+        for v in full_arrangement():
+            print(f"{idx} / {3**9}", end=" | ")
+            f.write(f"{idx}|{check(Operator(*v))}\n")
+            idx += 1
+            f.flush()
+    # check(Operator(0, 1, 0, 0, 2, 2, 1, 0, 2))
+    # check(Operator(1, 2, 1, 1, 0, 0, 2, 1, 0))
 
 
 if __name__ == "__main__":
