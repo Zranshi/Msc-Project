@@ -7,23 +7,25 @@ from PIL import Image
 from model import Operator, session
 
 
-def check_interchangeability(operators: list[Operator]) -> str:
+def check_interchangeability(ops: list[Operator]) -> str:
     """
     It is assumed that all three-valued logic operators are commutative.
     That is, True, False and Unknown can be interchanged without affecting
     the number of states that can be generated.
 
     Args:
-        operators (list[Operator]): All operator objects
+        ops (list[Operator]): All operator objects
 
     Returns:
         str: Conclusion
     """
     print("checking interchangeability...")
     order = [0, 1, 2]
+    op_set: set[str] = set()
     with alive_bar(19683 * 6) as bar:
-        for op in operators:
+        for op in ops:
             arr = op.to_array()
+            is_in_set = False
             for new_order in itertools.permutations(order):
                 new_arr = arr.copy()
                 for i in range(3):
@@ -37,37 +39,43 @@ def check_interchangeability(operators: list[Operator]) -> str:
                 elif new_op.count != op.count:
                     print(f"{op=}, {new_op=}")
                     return "Guess errors"
+                if str(new_op) in op_set:
+                    is_in_set = True
+            if not is_in_set:
+                op_set.add(op)
                 bar()
+    print(len(op_set))
+
     return "Guess correct"
 
 
 # Guess correct
 
 
-def check_NAND_like(operators: list[Operator]) -> str:
+def check_nand_like(ops: list[Operator]) -> str:
     """
     NAND operator based on Boolean logic.
     First set any two of True, False and Unknown as NAND operators,
     Then explore under what conditions the remaining value can make the operator universal.
 
     Args:
-        operators (list[Operator]): All operator objects
+        ops (list[Operator]): All operator objects
 
     Returns:
-        bool: Conclusion
+        str: Conclusion
     """
     ...
 
 
-def check_symmetry(operators: list[Operator]) -> str:
+def check_symmetry() -> str:
     """
     Explore the quantitative relationship between operators that conform to diagonal symmetry and universal operators.
 
     Args:
-        operators (list[Operator]): All operator objects
+        ops (list[Operator]): All operator objects
 
     Returns:
-        bool: Conclusion
+        str: Conclusion
     """
     print("finding symmetry universal operator...")
     domin = [0, 1, 2]
@@ -83,6 +91,7 @@ def check_symmetry(operators: list[Operator]) -> str:
             )
         )
         if op.count == 19683:
+            print(op.to_array())
             count += 1
     return f"{count=}"
 
@@ -94,12 +103,12 @@ def check_symmetry(operators: list[Operator]) -> str:
 # Result = 90
 
 
-def analyse_value_distribution(operators: list[Operator]) -> str:
+def analyse_value_distribution(ops: list[Operator]) -> str:
     """
     Explore the distribution of True, False and Unknown in all universal operators.
 
     Args:
-        operators (list[Operator]): All operator objects
+        ops (list[Operator]): All operator objects
 
     Returns:
         str: Conclusion
@@ -107,7 +116,7 @@ def analyse_value_distribution(operators: list[Operator]) -> str:
     print("Analysing value distribution...")
     init = [0, 0, 0]
     count = [[init.copy() for _ in range(3)] for _ in range(3)]
-    for op in operators:
+    for op in ops:
         arr = op.to_array()
         if op.count == 19683:
             for i in range(9):
@@ -144,13 +153,14 @@ def analyse_value_distribution(operators: list[Operator]) -> str:
 if __name__ == "__main__":
     operators = session.query(Operator).all()
 
-    # print("interchangeability", check_interchangeability(operators))
+    print("interchangeability", check_interchangeability(operators))
 
     # print("NAND_like", check_NAND_like(operators))
 
-    print("symmetry", check_symmetry(operators))
+    # print("symmetry", check_symmetry())
 
-    print(analyse_value_distribution(operators))
+    # print(analyse_value_distribution(operators))
 
-
-# Phased conclusions, for all universal operators. If they are overlapped, the value distribution is symmetrical, but for the respective operators, there are not many (90/3774) symmetrical
+# Phased conclusions.
+# For all universal operators. If they are overlapped, the value distribution is symmetrical,
+# but for the respective operators, there are not many (90/3774) symmetrical
